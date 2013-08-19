@@ -88,27 +88,37 @@
   }
 
   function drawItemList() {
-    for (var i in currentItems) {
+    var itemList = [], itemListString = "",
+      i, len, type;
+      
+    for (i in currentItems) {
       if (regular.test(currentItems[i][1])) {
-        var type = null;
-        if (currentItems[i][2] === '1') {
-          type = 'crafted';
-        } else if (currentItems[i][2] === '2') {
-          type = 'cooked';
-        } else {
-          type = 'na';
-        }
-
-        // WARNING: this is slow
-        if (itemtype === currentItems[i][2]) {
-          $('#itemlist ul')
-            .append('<li class="' + type + '" class="crafted" id="item-' + currentItems[i][0] + '"><img src="images_minecraft/' + currentItems[i][0] + '.png" alt="' + currentItems[i][1] + '" />' + currentItems[i][1] + ' <span>(id: ' + currentItems[i][0] + ')</span></li>');
-        } else if (itemtype === '0') {
-          $('#itemlist ul')
-            .append('<li class="' + type + '" id="item-' + currentItems[i][0] + '"><img src="images_minecraft/' + currentItems[i][0] + '.png" alt="' + currentItems[i][1] + '" />' + currentItems[i][1] + ' <span>(id: ' + currentItems[i][0] + ')</span></li>');
-        }
+        itemList.push(currentItems[i])
       }
     }
+    
+    for (i = 0, len = itemList.length; i < len; i++) {      
+      type = null;
+      if (itemList[i][2] === '1') {
+        type = 'crafted';
+      } else if (itemList[i][2] === '2') {
+        type = 'cooked';
+      } else {
+        type = 'na';
+      }
+      
+      if (itemtype === itemList[i][2]) {
+        itemListString += '<li class="' + type + '" class="crafted" id="item-' + itemList[i][0] + '"><img src="images_minecraft/' + itemList[i][0] + '.png" alt="' + itemList[i][1] + '" />' + itemList[i][1] + ' <span>(id: ' + itemList[i][0] + ')</span></li>';
+      } else if (itemtype === '0') {
+        itemListString += '<li class="' + type + '" id="item-' + itemList[i][0] + '"><img src="images_minecraft/' + itemList[i][0] + '.png" alt="' + itemList[i][1] + '" />' + itemList[i][1] + ' <span>(id: ' + itemList[i][0] + ')</span></li>';
+      }
+    }
+    
+    if (itemList.length === 1) {
+      craft(itemList[0][0]);
+    }
+    
+    $('#itemlist ul').html(itemListString);
   }
 
   function findItem(id) {
