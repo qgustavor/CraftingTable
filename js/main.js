@@ -1,4 +1,7 @@
+/*global $ quick_sort */
+
 (function () {
+  'use strict';
   var currentItems = {};
   var idItems = {};
   var alphaItems = {};
@@ -53,12 +56,13 @@
 
     $(window)
       .on('resize', onWindowResize)
-      .on('hashchange', onHashChange);
+      .on('hashchange', onHashChange)
+      .on('keydown', onKeyDown);
       
     onWindowResize();
   });
   
-  function onWindowResize() {
+  function onWindowResize () {
     // Responsible design (css?)
     small = $('body').width() < 768;
     if (small) {
@@ -87,13 +91,13 @@
     }
   }
 
-  function drawItemList() {
+  function drawItemList () {
     var itemList = [], itemListString = "",
       i, len, type;
       
     for (i in currentItems) {
       if (regular.test(currentItems[i][1])) {
-        itemList.push(currentItems[i])
+        itemList.push(currentItems[i]);
       }
     }
     
@@ -121,7 +125,7 @@
     $('#itemlist ul').html(itemListString);
   }
 
-  function findItem(id) {
+  function findItem (id) {
     for (var i in currentItems) {
       if (currentItems[i][0] === id) {
         return currentItems[i];
@@ -129,7 +133,7 @@
     }
   }
 
-  function switchRecipes() {
+  function switchRecipes () {
     if (!currentRecipe) { return; }
 
     for (var i = 0; i <= 8; i++) {
@@ -170,7 +174,7 @@
     }
   }
 
-  function switchFurnace() {
+  function switchFurnace () {
     var item = findItem(currentRecipe[0][rotation]);
     $('#furnace img.uncooked')
       .attr({
@@ -229,7 +233,7 @@
       return false;
     });
 
-  function clearTable() {
+  function clearTable () {
     rotation = 0;
     $('#bench img.slot, #bench #crafted img, #furnace img.cooked, #furnace img.uncooked')
       .attr('src', 'images_minecraft/0.png')
@@ -246,8 +250,8 @@
     $('#hideme, .content').show();
   }
 
-  function itemClick () {
-    craft($(this).attr('id').substr(5));
+  function itemClick (e) {
+    craft($(e.currentTarget).attr('id').substr(5));
   }
 
   function craft (id) {
@@ -302,4 +306,42 @@
         .find('h2').text(item[1]);
     }
   }
+
+  function onKeyDown (e) {
+    var
+      key = e.keyCode,
+      keyChar = String.fromCharCode(key);
+      
+    if (key === 32) {
+      $('#search input')
+        .text(key)
+        .focus();
+      return;
+    }
+    if (key === 38 || key === 40) {
+      var clicked = $('#itemlist li.clicked');
+      if (!clicked.length) {
+        clicked = $('#itemlist li:first').addClass('clicked');
+      } else {
+        clicked = clicked.removeClass('clicked')[key === 38? 'prev': 'next']();
+        if (clicked.length) {
+          clicked.addClass('clicked');
+        } else {
+          clicked = $('#itemlist li:' + (key === 38? 'last': 'first')).addClass('clicked');
+        }
+      }
+      
+      var yPos = clicked.offset().top - $('#itemlist li:first').offset().top;
+      $('#itemlist').scrollTop(yPos);
+      craft(clicked.attr('id').substr(5));
+      return;
+    }
+    
+    if (typeof key.search == 'function' && key.search(/\w/) !== -1) {
+      $('#search input')
+        .text(keyChar)
+        .focus();
+    }
+  }
+  
 }());
