@@ -313,9 +313,12 @@
       keyChar = String.fromCharCode(key);
       
     if (key === 32) {
-      $('#search input')
-        .text(key)
-        .focus();
+      $('#search input').focus();
+      return;
+    }
+    
+    if (document.activeElement === document.body && key === 8) {
+      $('#search input').val('').focus();
       return;
     }
     
@@ -338,10 +341,8 @@
       return;
     }
     
-    if (typeof keyChar.search == 'function' && keyChar.search(/\w/) !== -1) {
-      $('#search input')
-        .text(keyChar)
-        .focus();
+    if (document.activeElement === document.body && typeof keyChar.search == 'function' && keyChar.search(/\w/) !== -1) {
+      $('#search input').focus();
     }
   }
   
