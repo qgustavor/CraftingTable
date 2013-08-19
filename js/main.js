@@ -318,6 +318,7 @@
         .focus();
       return;
     }
+    
     if (key === 38 || key === 40) {
       var clicked = $('#itemlist li.clicked');
       if (!clicked.length) {
@@ -337,7 +338,7 @@
       return;
     }
     
-    if (typeof key.search == 'function' && key.search(/\w/) !== -1) {
+    if (typeof keyChar.search == 'function' && keyChar.search(/\w/) !== -1) {
       $('#search input')
         .text(keyChar)
         .focus();
